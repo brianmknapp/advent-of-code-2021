@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import List
 
 
@@ -26,8 +27,8 @@ def calculate_depth_measurement_increases(depths: List[int]) -> int:
     return increases
 
 
-def main(filename: str):
-    with open(filename) as file:
+def main(file_path: Path):
+    with open(file_path) as file:
         lines = file.readlines()
         lines = [int(line.rstrip()) for line in lines]
 
@@ -39,4 +40,5 @@ def main(filename: str):
 
 
 if __name__ == '__main__':
-    main(r'C:\repo\training\personal\advent-of-code-2021\input\day1_1.txt')
+    p = Path('../input/day1_1.txt')
+    main(p)
