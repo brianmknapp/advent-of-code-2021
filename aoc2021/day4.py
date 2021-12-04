@@ -87,7 +87,8 @@ def main(file_path: Path):
         game.call_number(number)
         if all([x.winner for x in game.boards]):
             game.boards.sort(key=lambda x: x.winning_order)
-            print(f'Last Board Score: {game.boards[-1].score}')
+            print(f'First Place Board Score: {game.boards[0].score}')
+            print(f'Last Place Board Score: {game.boards[-1].score}')
             break
 
 
