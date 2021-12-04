@@ -6,12 +6,17 @@ class Board:
     def __init__(self):
         self.board_data: List[List[Tuple[int, bool]]] = []
         self.winner: bool = False
+        self.score: int = 0
+        self.winning_order: int = 0
 
     def add_row(self, row_data: List[int]):
         self.board_data.append([(x, False) for x in row_data])
 
-    def check_if_winner(self):
+    def check_if_winner(self, last_called_value: int) -> bool:
         self.winner = any([self.check_rows(), self.check_columns()])
+        if self.winner and self.winning_order == 0:
+            self.score = self.calculate_score(last_called_value)
+            return True
 
     def check_rows(self) -> bool:
         return any([all([y for x, y in row]) for row in self.board_data])
@@ -39,15 +44,20 @@ class Game:
     def __init__(self, game_data: List[int], boards: List[Board]):
         self.game_data = game_data
         self.boards = boards
+        self.winning_counter: int = 0
 
     def call_number(self, number: int):
         for board in self.boards:
+            if board.winner:
+                continue
             for i, row in enumerate(board.board_data):
                 for j, cell in enumerate(row):
                     cell_value, matched = cell
                     if cell_value == number:
                         board.board_data[i][j] = (cell_value, True)
-            board.check_if_winner()
+            if board.check_if_winner(number):
+                self.winning_counter += 1
+                board.winning_order = self.winning_counter
 
     def check_for_winner(self) -> Board or None:
         for board in self.boards:
@@ -75,9 +85,9 @@ def main(file_path: Path):
     game = Game(game_data, boards)
     for number in game.game_data:
         game.call_number(number)
-        winner = game.check_for_winner()
-        if winner:
-            print(f'Winning Board Value: {winner.calculate_score(number)}')
+        if all([x.winner for x in game.boards]):
+            game.boards.sort(key=lambda x: x.winning_order)
+            print(f'Last Board Score: {game.boards[-1].score}')
             break
 
 
