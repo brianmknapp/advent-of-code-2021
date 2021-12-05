@@ -53,8 +53,15 @@ class Diagram:
             self.grid[y][x] += 1
 
     def plot_diagonal_path(self, point_a: Point, point_b: Point):
-        start_x, end_x = get_start_and_end_nodes(point_a, point_b, 'x')
-        start_y, end_y = get_start_and_end_nodes(point_a, point_b, 'y')
+        x_up: bool = point_a.x < point_b.x
+        y_up: bool = point_a.y < point_b.y
+        x = point_a.x
+        y = point_a.y
+        self.grid[y][x] += 1
+        while y != point_b.y and x != point_b.x:
+            x += 1 if x_up else -1
+            y += 1 if y_up else -1
+            self.grid[y][x] += 1
 
     def plot_path(self, path: Tuple[Point, Point]):
         point_a, point_b = path
@@ -62,8 +69,8 @@ class Diagram:
             self.plot_horizontal_path(point_a, point_b)
         elif point_a.x == point_b.x:
             self.plot_vertical_path(point_a, point_b)
-        #elif (point_a.x - point_b.x) == (point_a.y - point_b.y):
-            #self.plot_diagonal_path(point_a, point_b)
+        elif abs(point_a.x - point_b.x) == abs(point_a.y - point_b.y):
+            self.plot_diagonal_path(point_a, point_b)
 
     def calculate_number_of_dangerous_points(self, danger_level: int) -> int:
         return len([x for row in self.grid for x in row if x >= danger_level])
@@ -89,5 +96,5 @@ def main(file_path: Path):
 
 
 if __name__ == '__main__':
-    p = Path('../input/day5_test.txt')
+    p = Path('../input/day5_1.txt')
     main(p)
