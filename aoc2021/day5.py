@@ -15,6 +15,16 @@ class Point:
         self.y: int = point_data[1]
 
 
+def get_start_and_end_nodes(point_a: Point, point_b: Point, variable: str) -> Tuple[int, int]:
+    if getattr(point_a, variable) < getattr(point_b, variable):
+        start = getattr(point_a, variable)
+        end = getattr(point_b, variable)
+    else:
+        start = getattr(point_b, variable)
+        end = getattr(point_a, variable)
+    return start, end
+
+
 class Diagram:
     def __init__(self, paths: List[Tuple[Point, Point]]):
         self.paths: List[Tuple[Point, Point]] = paths
@@ -31,26 +41,20 @@ class Diagram:
             self.plot_path(path)
 
     def plot_horizontal_path(self, point_a: Point, point_b: Point):
+        start_x, end_x = get_start_and_end_nodes(point_a, point_b, 'x')
         y = point_a.y
-        if point_a.x < point_b.x:
-            start_x = point_a.x
-            end_x = point_b.x
-        else:
-            start_x = point_b.x
-            end_x = point_a.x
         for x in range(start_x, end_x + 1):
             self.grid[y][x] += 1
 
     def plot_vertical_path(self, point_a: Point, point_b: Point):
         x = point_a.x
-        if point_a.y < point_b.y:
-            start_y = point_a.y
-            end_y = point_b.y
-        else:
-            start_y = point_b.y
-            end_y = point_a.y
+        start_y, end_y = get_start_and_end_nodes(point_a, point_b, 'y')
         for y in range(start_y, end_y + 1):
             self.grid[y][x] += 1
+
+    def plot_diagonal_path(self, point_a: Point, point_b: Point):
+        start_x, end_x = get_start_and_end_nodes(point_a, point_b, 'x')
+        start_y, end_y = get_start_and_end_nodes(point_a, point_b, 'y')
 
     def plot_path(self, path: Tuple[Point, Point]):
         point_a, point_b = path
@@ -58,6 +62,8 @@ class Diagram:
             self.plot_horizontal_path(point_a, point_b)
         elif point_a.x == point_b.x:
             self.plot_vertical_path(point_a, point_b)
+        #elif (point_a.x - point_b.x) == (point_a.y - point_b.y):
+            #self.plot_diagonal_path(point_a, point_b)
 
     def calculate_number_of_dangerous_points(self, danger_level: int) -> int:
         return len([x for row in self.grid for x in row if x >= danger_level])
