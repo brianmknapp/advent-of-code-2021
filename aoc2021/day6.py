@@ -4,25 +4,30 @@ from typing import List, Dict
 
 class BreedingCalculator:
     def __init__(self, existing_fish: List[int]):
-        self.original_laternfish: Dict[int, int] = self.get_initial_collection()
+        self.original_laternfish: Dict[int, int] = self.get_initial_collection(existing_fish)
         self.current_laternfish: Dict[int, int] = {}
         
-    def get_initial_collection(self, ):
+    def get_initial_collection(self, existing_fish: List[int]) -> Dict[int, int]:
+        result: Dict[int, int] = {}
+        for i in range(9):
+            fish_count = len([x for x in existing_fish if x == i])
+            result[i] = fish_count
+        return result
 
     def progress_days(self, days_to_progress: int) -> int:
         self.current_laternfish = self.original_laternfish
         for i in range(1, days_to_progress + 1):
-            new_laternfish: List[Laternfish] = []
-            for laternfish in self.current_laternfish:
-                if laternfish.days_until_spawn == 0:
-                    laternfish.days_until_spawn = 6
-                    new_laternfish.append(Laternfish(8))
-                else:
-                    laternfish.days_until_spawn -= 1
-            self.current_laternfish.extend(new_laternfish)
-            # print(f'Day {i} fish: {[x.days_until_spawn for x in self.current_laternfish]} - Count: {len(self.current_laternfish)}')
-
-        return len(self.current_laternfish)
+            fish_to_breed = self.current_laternfish[0]
+            self.current_laternfish[0] = self.current_laternfish[1]
+            self.current_laternfish[1] = self.current_laternfish[2]
+            self.current_laternfish[2] = self.current_laternfish[3]
+            self.current_laternfish[3] = self.current_laternfish[4]
+            self.current_laternfish[4] = self.current_laternfish[5]
+            self.current_laternfish[5] = self.current_laternfish[6]
+            self.current_laternfish[6] = self.current_laternfish[7] + fish_to_breed
+            self.current_laternfish[7] = self.current_laternfish[8]
+            self.current_laternfish[8] = fish_to_breed
+        return sum({v for (k, v) in self.current_laternfish.items()})
 
 
 def main(file_path: Path, days_to_progress: int):
@@ -41,4 +46,4 @@ if __name__ == '__main__':
     main(p, 256)
 
     p = Path('../input/day6_1.txt')
-    #
+    main(p, 256)
