@@ -1,16 +1,13 @@
 from pathlib import Path
-from typing import List
-
-
-class Laternfish:
-    def __init__(self, days_until_spawn: int = 8):
-        self.days_until_spawn: int = days_until_spawn
+from typing import List, Dict
 
 
 class BreedingCalculator:
     def __init__(self, existing_fish: List[int]):
-        self.original_laternfish: List[Laternfish] = [Laternfish(x) for x in existing_fish]
-        self.current_laternfish: List[Laternfish] = self.original_laternfish
+        self.original_laternfish: Dict[int, int] = self.get_initial_collection()
+        self.current_laternfish: Dict[int, int] = {}
+        
+    def get_initial_collection(self, ):
 
     def progress_days(self, days_to_progress: int) -> int:
         self.current_laternfish = self.original_laternfish
@@ -23,7 +20,7 @@ class BreedingCalculator:
                 else:
                     laternfish.days_until_spawn -= 1
             self.current_laternfish.extend(new_laternfish)
-            print(f'Day {i} fish: {[x.days_until_spawn for x in self.current_laternfish]} - Count: {len(self.current_laternfish)}')
+            # print(f'Day {i} fish: {[x.days_until_spawn for x in self.current_laternfish]} - Count: {len(self.current_laternfish)}')
 
         return len(self.current_laternfish)
 
@@ -41,7 +38,7 @@ def main(file_path: Path, days_to_progress: int):
 
 if __name__ == '__main__':
     p = Path('../input/day6_test.txt')
-    main(p, 18)
+    main(p, 256)
 
     p = Path('../input/day6_1.txt')
     #
